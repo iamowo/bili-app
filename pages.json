@@ -32,6 +32,12 @@
       }
     },
     {
+      "path": "pages/my/login",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
       "path": "pages/video/video",
       "style": {
         "navigationStyle": "custom"
