@@ -1,40 +1,61 @@
 import http from ".";
 
-export function getWhisperList (uid) {
+// 聊天列表
+export function getWhisperList(uid) {
   return http({
-    method: 'GET',
-    url: `/message/getWhisperList/${uid}`
-  })
+    method: "GET",
+    url: `/message/getWhisperList/${uid}`,
+  });
 }
 
-export function sendMessage (data) {
+// 获取聊天内容
+export function getWhisperConent(uid, hisuid) {
   return http({
-    method: 'POST',
-    url: '/message/sendMessage',
-    data: data
-  })
+    method: "GET",
+    url: `/message/getWhisperConent/${uid}/${hisuid}`,
+  });
 }
 
-export function sendImg (data) {
+export function sendMessage(data) {
   return http({
-    method: 'POST',
-    url: '/message/sendImg',
-    data: data
-  })
+    method: "POST",
+    url: "/message/sendMessage",
+    data: data,
+  });
 }
 
-export function getSysinfo (uid) {
+export function sendImg(data) {
   return http({
-    method: 'GET',
-    url: `/message/getSysinfo/${uid}`
-  })
+    method: "POST",
+    url: "/message/sendImg",
+    data: data,
+  });
 }
 
-export function getLikeinfo (uid) {
+export function getSysinfo(uid) {
   return http({
-    method: 'GET',
-    url: `/message/getLikeinfo/${uid}`
-  })
+    method: "GET",
+    url: `/message/getSysinfo/${uid}`,
+  });
 }
 
+export function getLikeinfo(uid) {
+  return http({
+    method: "GET",
+    url: `/message/getLikeinfo/${uid}`,
+  });
+}
 
+export function getAtinfo(uid) {
+  return http({
+    method: "GET",
+    url: `/message/getAtinfo/${uid}`,
+  });
+}
+
+export function updateWhisperList(uid, deleted) {
+  return http({
+    method: "GET",
+    url: `/message/updateWhisperList/${uid}/${deleted}`,
+  });
+}

@@ -1,11 +1,21 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onBeforeMount } from "vue";
 import Home from "./components/Home.vue";
 
-const typeindex = ref(1); // 支部  推荐  热门五年 动画。。。
+const typeindex = ref(1), // 支部  推荐  热门五年 动画。。。
+  loginflag = ref(false),
+  userinfo = ref(),
+  // 再mounted中更新uid的话，子组件中的值不会更新
+  uid = ref(); // 初始值为-2  未登录为-1
 
-onMounted(() => {
-  console.log("2333");
+onBeforeMount(() => {
+  userinfo.value = JSON.parse(localStorage.getItem("userinfo"));
+  loginflag.value =
+    JSON.parse(localStorage.getItem("loginflag")) != null
+      ? JSON.parse(localStorage.getItem("loginflag"))
+      : false;
+  uid.value = loginflag.value ? userinfo.value.uid : -1;
+  console.log(uid.value);
 });
 
 const changeindex = (e) => {
@@ -17,7 +27,12 @@ const changeindex = (e) => {
 <template>
   <scroll-view scroll-y class="dunamic-view">
     <view class="home-top-line">
-      <image class="home-top-avatar"></image>
+      <image
+        class="home-top-avatar"
+        v-if="loginflag"
+        :src="userinfo.avatar"
+      ></image>
+      <view class="ot" v-else>123</view>
       <view class="input-box">
         <input type="text" class="top-search" />
       </view>
@@ -68,7 +83,7 @@ const changeindex = (e) => {
       <swiper-item> 直播 </swiper-item>
       <!-- 首页 -->
       <swiper-item>
-        <Home />
+        <Home :uid="uid" />
       </swiper-item>
       <!-- 热门 -->
       <swiper-item>

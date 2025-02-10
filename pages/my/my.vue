@@ -1,78 +1,90 @@
-<script>
+<script setup>
 import { ref, onMounted } from "vue";
 import { useUserinfoStore } from "../../store/userinfo";
 import { getByUid } from "../../api/user";
 import { storeToRefs } from "pinia";
+import { tothispage } from "../../fnc/function";
 
 const store = useUserinfoStore();
-const { loginflag, userinfo } = storeToRefs(store);
-console.log("===userinfo===: ", loginflag.value, userinfo.value.avatar);
 
-if (loginflag.value === false) {
-  uni.navigateTo({
-    url: `pages/my/login`,
-  });
+const loginflag = JSON.parse(localStorage.getItem("loginflag"));
+const userinfo = ref(null);
+console.log("登陆状态: ", loginflag);
+console.log(loginflag == null || loginflag === false);
+
+if (loginflag == null || loginflag === false) {
+  tothispage("/my/login", 0);
 }
 
-onMounted(async () => {});
+onMounted(() => {
+  const temp = JSON.parse(localStorage.getItem("userinfo"));
+  if (temp) {
+    userinfo.value = temp;
+    console.log(userinfo);
+  }
+});
 </script>
 
 <template>
-  <view class="my-top-control">
-    <text class="icon icononft">1</text>
-    <text class="icon icononft">1</text>
-    <text class="icon icononft">1</text>
-    <text class="icon icononft">1</text>
-  </view>
-  <view class="my-userinfo">
-    <view class="left-avatar-box">
-      <image :src="userinfo.avatar" mode="scaleToFill" />
+  <view class="myspace">
+    <view class="my-top-control">
+      <text class="icon iconfont">12</text>
+      <text class="icon iconfont" @click="tothispage('/my/sacnLogin', 0)"
+        >&#xe664;</text
+      >
+      <text class="icon iconfont">1</text>
+      <text class="icon iconfont">1</text>
     </view>
-    <view class="right-userinfo1">
-      <view class="line1">
-        <text>{{ userinfo?.name }}</text>
+    <view class="my-userinfo">
+      <view class="left-avatar-box">
+        <image :src="userinfo?.avatar" mode="aspectFill" />
       </view>
-      <view class="line1">正式会员</view>
-      <view class="line1">0硬币</view>
+      <view class="right-userinfo1">
+        <view class="line1">
+          <text>{{ userinfo?.name }}</text>
+        </view>
+        <view class="line1">正式会员</view>
+        <view class="line1">{{ userinfo?.icons }}硬币</view>
+      </view>
     </view>
-  </view>
-  <view class="my-userinfo2">
-    <view class="one-infos2">
-      <text class="t1">1</text>
-      <text class="t2">粉丝</text>
+    <view class="my-userinfo2">
+      <view class="one-infos2">
+        <text class="t1">{{ userinfo?.dynamics }}</text>
+        <text class="t2">动态</text>
+      </view>
+      <view class="one-infos2">
+        <text class="t1">{{ userinfo?.follows }}</text>
+        <text class="t2">关注</text>
+      </view>
+      <view class="one-infos2">
+        <text class="t1">{{ userinfo?.fans }}</text>
+        <text class="t2">粉丝</text>
+      </view>
     </view>
-    <view class="one-infos2">
-      <text class="t1">1</text>
-      <text class="t2">粉丝</text>
+    <view class="tocontrol">
+      <view class="one-con-box">
+        <text class="icon iconfont">1</text>
+        <text class="cb-text">离线缓存</text>
+      </view>
+      <view class="one-con-box">
+        <text class="icon iconfont">1</text>
+        <text class="cb-text">离线缓存</text>
+      </view>
+      <view class="one-con-box">
+        <text class="icon iconfont">1</text>
+        <text class="cb-text">离线缓存</text>
+      </view>
+      <view class="one-con-box">
+        <text class="icon iconfont">1</text>
+        <text class="cb-text">离线缓存</text>
+      </view>
     </view>
-    <view class="one-infos2">
-      <text class="t1">1</text>
-      <text class="t2">粉丝</text>
-    </view>
-  </view>
-  <view class="tocontrol">
-    <view class="one-con-box">
-      <text class="icon iconfont">1</text>
-      <text class="cb-text">离线缓存</text>
-    </view>
-    <view class="one-con-box">
-      <text class="icon iconfont">1</text>
-      <text class="cb-text">离线缓存</text>
-    </view>
-    <view class="one-con-box">
-      <text class="icon iconfont">1</text>
-      <text class="cb-text">离线缓存</text>
-    </view>
-    <view class="one-con-box">
-      <text class="icon iconfont">1</text>
-      <text class="cb-text">离线缓存</text>
-    </view>
-  </view>
-  <view class="more-setting">
-    <view class="setting-line1">更多设置</view>
-    <view class="oneline2">
-      <text class="icon iconfont">1</text>
-      <text class="t1">设置</text>
+    <view class="more-setting">
+      <view class="setting-line1">更多设置</view>
+      <view class="oneline2">
+        <text class="icon iconfont">1</text>
+        <text class="t1" @click="() => tothispage('/my/setting', 0)">设置</text>
+      </view>
     </view>
   </view>
 </template>
@@ -103,13 +115,16 @@ onMounted(async () => {});
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    background-color: pink;
+    image {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
   }
   .right-userinfo1 {
     margin-left: 15px;
     flex: 1;
     height: 70px;
-    background-color: pink;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -120,6 +135,7 @@ onMounted(async () => {});
     }
   }
 }
+
 .my-userinfo2 {
   background-color: #fff;
   width: 100%;

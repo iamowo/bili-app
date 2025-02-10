@@ -4,34 +4,30 @@ import { getByVid, getVideoLikely } from "../../api/video";
 import { ref, onMounted } from "vue";
 import { getAllComment } from "../../api/comment";
 
-const uid = 1;
 // 获取路由参数
-const props = defineProps(["vid"]);
-const vid = parseInt(props.vid);
+const props = defineProps(["uid", "vid"]);
+const { uid, vid } = props;
 
-console.log(vid);
-const topindex = ref(0); //0 推荐  1 评论
-const videoinfo = ref();
+const topindex = ref(0), //0 推荐  1 评论
+  videoinfo = ref();
 
-const moreintroflag = ref(false); // 显示更多信息， 简介
-const commentlist = ref(); // 评论列表
-const recommentlist = ref(); // 推荐视频
-const clistlength = ref();
-const swiperHeight = ref(0);
+const moreintroflag = ref(false), // 显示更多信息， 简介
+  commentlist = ref([]), // 评论列表
+  recommentlist = ref(), // 推荐视频
+  clistlength = ref(),
+  swiperHeight = ref(0);
 
 onMounted(async () => {
-  const res1 = await getByVid(vid, uid);
-  console.log(res1);
-  videoinfo.value = res1;
-
-  const res2 = await getAllComment(vid);
-  console.log("............", res2);
-  clistlength.value = res2.length;
-
-  commentlist.value = res2;
-
-  const res3 = await getVideoLikely(vid);
-  recommentlist.value = res3;
+  const res = await Promise.all([
+    getByVid(vid, uid),
+    getAllComment(vid, uid, 0, 0),
+    getVideoLikely(vid),
+  ]);
+  console.log(res);
+  videoinfo.value = res[0];
+  clistlength.value = res[1].length;
+  commentlist.value = res[1];
+  recommentlist.value = res[2];
 });
 
 const changeSwiper = (e) => {
@@ -221,9 +217,18 @@ const setSwiperHeight = () => {};
               <view class="line-time">{{ item.time.slice(0, 10) }}</view>
               <view class="line-comment">{{ item.content }}</view>
               <view class="line-commentinfos">
-                <text class="s1">1</text>
-                <text class="s1">2</text>
-                <text class="s1">3</text>
+                <view class="s1"
+                  ><text class="iconfont">&#xec8c;</text
+                  ><text class="txt">1</text></view
+                >
+                <view class="s1"
+                  ><text class="iconfont">&#xec8c;</text
+                  ><text class="txt">1</text></view
+                >
+                <view class="s1"
+                  ><text class="iconfont">&#xec8c;</text
+                  ><text class="txt">1</text></view
+                >
               </view>
               <view class="second-c-box" v-if="item.lists !== null">
                 <view
@@ -241,6 +246,14 @@ const setSwiperHeight = () => {};
           </view>
         </view>
       </scroll-view>
+      <view class="commentline">
+        <view class="leftinputbox">
+          <input type="text" placeholder="发表评论~" />
+        </view>
+        <view class="rightemoji">
+          <text class="iconfont">😊</text>
+        </view>
+      </view>
     </swiper-item>
   </swiper>
 </template>
@@ -316,6 +329,7 @@ const setSwiperHeight = () => {};
 }
 .swiper-box {
   width: 100%;
+  height: fit-content;
   // min-height: 100vh;
 }
 .sitem1 {
@@ -535,86 +549,118 @@ const setSwiperHeight = () => {};
   width: 100%;
   height: fit-content;
   background-color: #fff;
-  .commetline-top {
-    width: 100%;
-    height: 50px;
-    box-sizing: border-box;
-    padding: 0 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-.vido-btm-view2 {
-  width: 100%;
-  height: 400px;
-  background-color: #fff;
-  box-sizing: border-box;
-  .one-comment {
-    width: 100%;
-    height: fit-content;
-    box-sizing: border-box;
-    border-top: 1px solid #e3e5e7;
-    padding: 10px;
-    display: flex;
-    .left-avatar {
-      width: 40px;
-      height: 40px;
-      .avatar-c {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-color: red;
-      }
+  .video-content22 {
+    .commetline-top {
+      width: 100%;
+      height: 50px;
+      box-sizing: border-box;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .right-comment {
-      margin-left: 10px;
-      flex: 1;
-      height: fit-content;
-      .line-name {
-        width: 100%;
-        height: 20px;
-        font-size: 16px;
-      }
-      .line-time {
-        width: 100%;
-        height: 20px;
-        line-height: 20px;
-        font-size: 14px;
-        color: #9499a0;
-      }
-      .line-comment {
-        margin: 10px 0;
+    .vido-btm-view2 {
+      width: 100%;
+      height: 400px;
+      background-color: #fff;
+      box-sizing: border-box;
+      .one-comment {
         width: 100%;
         height: fit-content;
-      }
-      .line-commentinfos {
-        width: 100%;
-        height: 20px;
+        box-sizing: border-box;
+        border-top: 1px solid #e3e5e7;
+        padding: 10px;
         display: flex;
-        .s1 {
-          margin-right: 10px;
+        .left-avatar {
+          width: 40px;
+          height: 40px;
+          .avatar-c {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: red;
+          }
         }
-      }
-      .second-c-box {
-        width: 100%;
-        height: fit-content;
-        background-color: #e3e5e7;
-        border-radius: 4px;
-        margin: 10px 0;
-        .line-second-comment {
-          width: 100%;
+        .right-comment {
+          margin-left: 10px;
+          flex: 1;
           height: fit-content;
-          .one-second-list {
+          .line-name {
             width: 100%;
-            max-height: 40px;
+            height: 20px;
+            font-size: 16px;
+          }
+          .line-time {
+            width: 100%;
+            height: 20px;
             line-height: 20px;
-            .nametext {
-              color: #32aeec;
+            font-size: 14px;
+            color: #9499a0;
+          }
+          .line-comment {
+            margin: 10px 0;
+            width: 100%;
+            height: fit-content;
+          }
+          .line-commentinfos {
+            width: 100%;
+            height: 20px;
+            display: flex;
+            .s1 {
+              margin-right: 10px;
+            }
+          }
+          .second-c-box {
+            width: 100%;
+            height: fit-content;
+            background-color: #e3e5e7;
+            border-radius: 4px;
+            margin: 10px 0;
+            .line-second-comment {
+              width: 100%;
+              height: fit-content;
+              .one-second-list {
+                width: 100%;
+                max-height: 40px;
+                line-height: 20px;
+                .nametext {
+                  color: #32aeec;
+                }
+              }
             }
           }
         }
       }
+    }
+  }
+  .commentline {
+    background-color: red;
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    box-sizing: border-box;
+    border-top: 1px solid #e8f3f8;
+    display: flex;
+    padding: 10px 15px;
+    .leftinputbox {
+      flex: 1;
+      height: 40px;
+      box-sizing: border-box;
+      padding-right: 15px;
+      input {
+        height: 30px;
+        background-color: rgb(204, 198, 198);
+        border-radius: 15px;
+        box-sizing: border-box;
+        padding: 0 10px;
+      }
+    }
+    .rightemoji {
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
     }
   }
 }

@@ -4,6 +4,9 @@ import { getAllVideo } from "../../../api/video";
 import { tothisvideo } from "../../../fnc/function";
 import { getBanner } from "../../../api/banner";
 
+const { uid } = defineProps(["uid"]);
+console.log("udi is: ", uid);
+
 const videoList = ref([]),
   bannerlist = ref([]);
 
@@ -33,7 +36,7 @@ onMounted(async () => {
       class="home-one-video"
       v-for="item in videoList"
       :key="item.vid"
-      @click="tothisvideo($event)"
+      @click="tothisvideo(item.vid, uid)"
     >
       <image
         :data-vid="item.vid"
