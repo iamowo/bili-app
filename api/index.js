@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const baseUrl = "http://127.0.0.1:8082";
-const baseUrl2 = "http://127.0.0.1:3000";
+const baseUrl = "http://192.168.102.15:8082";
+const baseUrl2 = "http://172.16.1.15:5173";
 
-// const baseUrl = 'http://49.235.146.19:8082'
-// const baseUrl2 = 'http://49.235.146.19:3000'
+// const baseUrl = "http://49.235.146.19:8082";
+// const baseUrl2 = "http://172.16.1.15:5173";
 
 export const baseurl = baseUrl;
 export const baseurl2 = baseUrl2;
@@ -27,7 +27,8 @@ http.interceptors.request.use(
       token != null &&
       token !== "" &&
       config.url !== "/user/login" &&
-      config.url !== "/user/register"
+      config.url !== "/user/register" &&
+      config.url !== "/user/verifyQrCode"
       // && config.url !== '/user/register'
       // && config.url !== '/video/getAllVideo'
       // && config.url !== '/video/getRandom'

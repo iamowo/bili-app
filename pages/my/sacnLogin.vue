@@ -1,5 +1,70 @@
 <script setup>
 import { goback } from "../../fnc/function";
+import { verifyQrCode } from "../../api/user";
+
+const checkQRCodeStatus = () => {
+  const interval = setInterval(async () => {
+    const res = await verifyQrCode();
+    if (res.data === "二维码已扫描") {
+      clearInterval(interval);
+      // 跳转到登录成功页面
+      uni.navigateTo({ url: "/pages/loginSuccess" });
+    }
+  }, 2000); // 每2秒轮询一次
+};
+
+// 扫码功能
+const scanCode = (type = "scan") => {
+  uni.scanCode({
+    onlyFromCamera: type === "scan", // 如果是扫码，仅从相机扫码
+    scanType: ["qrCode"], // 只识别二维码
+    success: (res) => {
+      console.log("扫码结果:", res.result);
+      uni.showToast({
+        title: "扫码成功: " + res.result,
+        icon: "success",
+      });
+      // 这里可以将扫码结果发送到后端进行登录确认
+      confirmLogin(res.result);
+    },
+    fail: (err) => {
+      console.error("扫码失败:", err);
+      uni.showToast({
+        title: "扫码失败，请重试",
+        icon: "none",
+      });
+    },
+  });
+};
+
+// 打开相册扫码
+const openAlbum = () => {
+  scanCode("album");
+};
+
+// 确认登录（将扫码结果发送到后端）
+const confirmLogin = (token) => {
+  uni.request({
+    url: "https://yourdomain.com/auth/confirm",
+    method: "POST",
+    data: {
+      token: token,
+      userId: "user123", // 这里应该是当前登录用户的ID
+    },
+    success: (res) => {
+      uni.showToast({
+        title: "登录成功",
+        icon: "success",
+      });
+    },
+    fail: (err) => {
+      uni.showToast({
+        title: "登录失败",
+        icon: "none",
+      });
+    },
+  });
+};
 </script>
 
 <template>

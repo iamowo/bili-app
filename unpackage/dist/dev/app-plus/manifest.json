@@ -17,6 +17,8 @@
     "url": ""
   },
   "permissions": {
+    "Camera": {},
+    "Barcode": {},
     "UniNView": {
       "description": "UniNView原生渲染"
     }

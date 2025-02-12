@@ -131,3 +131,14 @@ export function getUserData(uid) {
     },
   });
 }
+
+// 用户数据
+export function verifyQrCode(qrCodeContent) {
+  return http({
+    method: "POST",
+    url: "/user/verifyQrCode",
+    data: {
+      qrCodeContent: qrCodeContent,
+    },
+  });
+}

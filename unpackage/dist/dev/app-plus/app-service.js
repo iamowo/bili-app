@@ -2438,8 +2438,8 @@ if (uni.restoreGlobal) {
   axios.getAdapter = adapters.getAdapter;
   axios.HttpStatusCode = HttpStatusCode$1;
   axios.default = axios;
-  const baseUrl = "http://127.0.0.1:8082";
-  const baseUrl2 = "http://127.0.0.1:3000";
+  const baseUrl = "http://192.168.102.15:8082";
+  const baseUrl2 = "http://172.16.1.15:5173";
   const http = axios.create({
     baseURL: baseUrl,
     timeout: 15e3,
@@ -2449,7 +2449,7 @@ if (uni.restoreGlobal) {
     (config) => {
       const userinfo = JSON.parse(localStorage.getItem("userinfo"));
       const token = userinfo != null && userinfo !== "" ? userinfo.token : null;
-      if (token != null && token !== "" && config.url !== "/user/login" && config.url !== "/user/register") {
+      if (token != null && token !== "" && config.url !== "/user/login" && config.url !== "/user/register" && config.url !== "/user/verifyQrCode") {
         config.headers.token = token;
       }
       return config;
@@ -2469,13 +2469,13 @@ if (uni.restoreGlobal) {
     },
     (error) => {
       if (error.response.status === 401) {
-        formatAppLog("log", "at api/index.js:59", "==token失效==");
+        formatAppLog("log", "at api/index.js:60", "==token失效==");
         localStorage.removeItem("userinfo");
         localStorage.removeItem("token");
         window.open(baseUrl2 + "/");
         document.location.reload();
       } else {
-        formatAppLog("log", "at api/index.js:65", "其他错误");
+        formatAppLog("log", "at api/index.js:66", "其他错误");
       }
       return Promise.reject(error);
     }
